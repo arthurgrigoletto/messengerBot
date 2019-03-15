@@ -1,171 +1,173 @@
-const Request = require("request-promise");
-const AssistantService = require("./AssistantService");
+/* eslint-disable no-unused-vars */
+/* eslint-disable class-methods-use-this */
+
+const Request = require('request-promise');
+const AssistantService = require('./AssistantService');
+
 const delay = 1200;
 
 class MessengerService {
-  async handleMessage(sender_psid, received_message) {
+  async handleMessage(senderPsid, receivedMessage) {
     let response;
-    let user = await this.getUserInfo(sender_psid);
+    const user = await this.getUserInfo(senderPsid);
 
-    let first_name = user.first_name;
+    const { firstName } = user;
 
-    let paramsToWatson = {
+    const paramsToWatson = {
       input: {
-        text: received_message.text
+        text: receivedMessage.text,
       },
       context: {
-        username: first_name
-      }
+        username: firstName,
+      },
     };
 
-    if (received_message.text) {
-      const assistantResponse = await AssistantService.sendMessage(
-        paramsToWatson
-      );
+    if (receivedMessage.text) {
+      const assistantResponse = await AssistantService.sendMessage(paramsToWatson);
       response = {
-        text: assistantResponse.output.text[0]
+        text: assistantResponse.output.text[0],
       };
     }
 
     // Sends the response message
-    this.callSendAPI(sender_psid, response);
+    this.callSendAPI(senderPsid, response);
   }
 
-  getUserInfo(sender_psid) {
+  getUserInfo(senderPsid) {
     return Request({
-      method: "GET",
-      uri: `https://graph.facebook.com/${sender_psid}`,
+      method: 'GET',
+      uri: `https://graph.facebook.com/${senderPsid}`,
       qs: {
-        fields: "first_name, last_name",
-        access_token: process.env.ACCESS_TOKEN
+        fields: 'first_name, last_name',
+        access_token: process.env.ACCESS_TOKEN,
       },
-      json: true
+      json: true,
     });
   }
 
-  handlePostback(sender_psid, received_postback) {
+  handlePostback(senderPsid, receivedPostback) {
     let response;
 
-    let payload = received_postback.payload;
+    const { payload } = receivedPostback;
 
-    if (payload === "yes") {
-      response = { text: "Thanks!" };
-    } else if (payload === "no") {
-      response = { text: "Oops, try sending another image." };
+    if (payload === 'yes') {
+      response = { text: 'Thanks!' };
+    } else if (payload === 'no') {
+      response = { text: 'Oops, try sending another image.' };
     }
-    this.callSendAPI(sender_psid, response);
+    this.callSendAPI(senderPsid, response);
   }
 
-  sendTyping(sender_psid) {
-    let request_body = {
+  sendTyping(senderPsid) {
+    const requestBody = {
       recipient: {
-        id: sender_psid
+        id: senderPsid,
       },
-      sender_action: "typing_on"
+      sender_action: 'typing_on',
     };
     Request(
       {
-        method: "POST",
-        uri: "https://graph.facebook.com/v2.6/me/messages",
+        method: 'POST',
+        uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
-          access_token: process.env.ACCESS_TOKEN
+          access_token: process.env.ACCESS_TOKEN,
         },
-        json: request_body
+        json: requestBody,
       },
       (err, res, body) => {
         if (!err) {
-          console.log("Message Sent!");
+          console.log('Message Sent!');
         } else {
           console.error(`Unable to send message: ${err}`);
         }
-      }
+      },
     );
   }
 
-  endTyping(sender_psid) {
-    let request_body = {
+  endTyping(senderPsid) {
+    const requestBody = {
       recipient: {
-        id: sender_psid
+        id: senderPsid,
       },
-      sender_action: "typing_off"
+      sender_action: 'typing_off',
     };
     Request(
       {
-        method: "POST",
-        uri: "https://graph.facebook.com/v2.6/me/messages",
+        method: 'POST',
+        uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
-          access_token: process.env.ACCESS_TOKEN
+          access_token: process.env.ACCESS_TOKEN,
         },
-        json: request_body
+        json: requestBody,
       },
       (err, res, body) => {
         if (!err) {
-          console.log("Message Sent!");
+          console.log('Message Sent!');
         } else {
           console.error(`Unable to send message: ${err}`);
         }
-      }
+      },
     );
   }
 
-  markSeen(sender_psid) {
-    let request_body = {
+  markSeen(senderPsid) {
+    const requestBody = {
       recipient: {
-        id: sender_psid
+        id: senderPsid,
       },
-      sender_action: "mark_seen"
+      sender_action: 'mark_seen',
     };
     Request(
       {
-        method: "POST",
-        uri: "https://graph.facebook.com/v2.6/me/messages",
+        method: 'POST',
+        uri: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {
-          access_token: process.env.ACCESS_TOKEN
+          access_token: process.env.ACCESS_TOKEN,
         },
-        json: request_body
+        json: requestBody,
       },
       (err, res, body) => {
         if (!err) {
-          console.log("Message Sent!");
+          console.log('Message Sent!');
         } else {
           console.error(`Unable to send message: ${err}`);
         }
-      }
+      },
     );
   }
 
-  async callSendAPI(sender_psid, response) {
+  async callSendAPI(senderPsid, response) {
     // Construct the message body
-    let request_body = {
+    const requestBody = {
       recipient: {
-        id: sender_psid
+        id: senderPsid,
       },
-      message: response
+      message: response,
     };
 
-    this.markSeen(sender_psid);
+    this.markSeen(senderPsid);
     setTimeout(() => {
-      this.sendTyping(sender_psid);
+      this.sendTyping(senderPsid);
     }, delay);
     setTimeout(() => {
       Request(
         {
-          method: "POST",
-          uri: "https://graph.facebook.com/v2.6/me/messages",
+          method: 'POST',
+          uri: 'https://graph.facebook.com/v2.6/me/messages',
           qs: {
-            access_token: process.env.ACCESS_TOKEN
+            access_token: process.env.ACCESS_TOKEN,
           },
-          json: request_body
+          json: requestBody,
         },
         (err, res, body) => {
           if (!err) {
-            console.log("Message Sent!");
+            console.log('Message Sent!');
           } else {
             console.error(`Unable to send message: ${err}`);
           }
-        }
+        },
       );
-      this.endTyping(sender_psid);
+      this.endTyping(senderPsid);
     }, delay * 2);
   }
 }

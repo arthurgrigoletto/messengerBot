@@ -1,6 +1,6 @@
-require("dotenv").config();
-const express = require("express");
-const routes = require("./routes");
+require('dotenv').config();
+const express = require('express');
+const routes = require('./routes');
 
 class App {
   constructor() {
@@ -16,7 +16,7 @@ class App {
   }
 
   routes() {
-    this.express.use("/api", routes);
+    this.express.use('/api', routes);
   }
 }
 
