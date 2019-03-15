@@ -1,15 +1,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable class-methods-use-this */
 
-const Request = require('request-promise');
-const AssistantService = require('./AssistantService');
+const daos = require('../dao');
 
 const delay = 1200;
 
 class MessengerService {
   async handleMessage(senderPsid, receivedMessage) {
     let response;
-    const user = await this.getUserInfo(senderPsid);
+    const user = await daos.MessengerDAO.getUserInfo(senderPsid);
 
     const { firstName } = user;
 
@@ -23,26 +22,14 @@ class MessengerService {
     };
 
     if (receivedMessage.text) {
-      const assistantResponse = await AssistantService.sendMessage(paramsToWatson);
+      const { output } = await daos.AssistantDAO.sendMessage(paramsToWatson);
       response = {
-        text: assistantResponse.output.text[0],
+        text: output.text[0],
       };
     }
 
     // Sends the response message
     this.callSendAPI(senderPsid, response);
-  }
-
-  getUserInfo(senderPsid) {
-    return Request({
-      method: 'GET',
-      uri: `https://graph.facebook.com/${senderPsid}`,
-      qs: {
-        fields: 'first_name, last_name',
-        access_token: process.env.ACCESS_TOKEN,
-      },
-      json: true,
-    });
   }
 
   handlePostback(senderPsid, receivedPostback) {
@@ -65,23 +52,7 @@ class MessengerService {
       },
       sender_action: 'typing_on',
     };
-    Request(
-      {
-        method: 'POST',
-        uri: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {
-          access_token: process.env.ACCESS_TOKEN,
-        },
-        json: requestBody,
-      },
-      (err, res, body) => {
-        if (!err) {
-          console.log('Message Sent!');
-        } else {
-          console.error(`Unable to send message: ${err}`);
-        }
-      },
-    );
+    daos.MessengerDAO.makeRequest(requestBody);
   }
 
   endTyping(senderPsid) {
@@ -91,23 +62,7 @@ class MessengerService {
       },
       sender_action: 'typing_off',
     };
-    Request(
-      {
-        method: 'POST',
-        uri: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {
-          access_token: process.env.ACCESS_TOKEN,
-        },
-        json: requestBody,
-      },
-      (err, res, body) => {
-        if (!err) {
-          console.log('Message Sent!');
-        } else {
-          console.error(`Unable to send message: ${err}`);
-        }
-      },
-    );
+    daos.MessengerDAO.makeRequest(requestBody);
   }
 
   markSeen(senderPsid) {
@@ -117,23 +72,7 @@ class MessengerService {
       },
       sender_action: 'mark_seen',
     };
-    Request(
-      {
-        method: 'POST',
-        uri: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {
-          access_token: process.env.ACCESS_TOKEN,
-        },
-        json: requestBody,
-      },
-      (err, res, body) => {
-        if (!err) {
-          console.log('Message Sent!');
-        } else {
-          console.error(`Unable to send message: ${err}`);
-        }
-      },
-    );
+    daos.MessengerDAO.makeRequest(requestBody);
   }
 
   async callSendAPI(senderPsid, response) {
@@ -150,23 +89,7 @@ class MessengerService {
       this.sendTyping(senderPsid);
     }, delay);
     setTimeout(() => {
-      Request(
-        {
-          method: 'POST',
-          uri: 'https://graph.facebook.com/v2.6/me/messages',
-          qs: {
-            access_token: process.env.ACCESS_TOKEN,
-          },
-          json: requestBody,
-        },
-        (err, res, body) => {
-          if (!err) {
-            console.log('Message Sent!');
-          } else {
-            console.error(`Unable to send message: ${err}`);
-          }
-        },
-      );
+      daos.MessengerDAO.makeRequest(requestBody);
       this.endTyping(senderPsid);
     }, delay * 2);
   }

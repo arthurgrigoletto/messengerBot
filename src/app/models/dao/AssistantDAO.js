@@ -2,19 +2,17 @@
 
 const Request = require('request-promise');
 
-class AssistantService {
+class AssistantDAO {
   constructor() {
     this._username = process.env.ASSISTANT_USERNAME;
     this._password = process.env.ASSISTANT_PASSWORD;
     this._workspaceID = process.env.WORKSPACE_ID;
-    this._version = '2018-07-10';
+    this._version = '2018-10-20';
     this._url = 'https://gateway.watsonplatform.net/assistant/api/v1/workspaces';
   }
 
   sendMessage(params) {
-    // params = params || {};
-
-    const { input, context } = params;
+    const { input } = params;
 
     const response = Request({
       method: 'POST',
@@ -31,13 +29,11 @@ class AssistantService {
       },
       body: {
         input,
-        context,
       },
       json: true,
     });
-
     return response;
   }
 }
 
-module.exports = new AssistantService();
+module.exports = new AssistantDAO();
