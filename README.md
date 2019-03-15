@@ -22,7 +22,7 @@ Quais coisas você precisa instalar e como instalá-las.
 
   - Crie uma conta gratuita na IBM Cloud, isso será suficiente para suprir nossa necessidade
 
-- [Watson Assistant Instance](https://git.ng.bluemix.net/Arthur.grigoletto/voz-da-art-server/blob/master/docs/WatsonAssistant.md)
+- [Watson Assistant Instance](https://github.com/arthurgrigoletto/messengerBot/blob/master/docs/WatsonAssistant.md)
 
 ### Installing
 
@@ -70,7 +70,7 @@ Há alguns scripts disponibilizados para facilitar na hora do desenvolvimento
 
 ## Deployment
 
-Veja [Deployment.md](https://github.ibm.com/Arthur-Grigoletto/voz-da-arte-server/blob/master/docs/Deployment.md)
+Veja [Deployment.md](https://github.com/arthurgrigoletto/messengerBot/blob/master/docs/Deployment.md)
 
 ## Built With
 
@@ -84,3 +84,12 @@ Veja [Deployment.md](https://github.ibm.com/Arthur-Grigoletto/voz-da-arte-server
 ## License
 
 Esse projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE.md](LICENSE.md) para mais detalhes.
+
+## References
+
+- [Watson Assistant API](https://console.bluemix.net/apidocs/assistant)
+- [Watson Assistant Playlist](https://www.youtube.com/watch?v=h-u-5f8fZtc&list=PLZDyxLlNKRY8zx37vPh6s_pCtOXIp_5yL)
+- [Watson Assistant Overview](https://cloud.ibm.com/docs/services/assistant?topic=assistant-getting-started#getting-started)
+- [Configurando Webhook](https://developers.facebook.com/docs/messenger-platform/getting-started/webhook-setup)
+- [Configurando Aplicativo](https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup)
+- [Inicio Rápido](https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start)
